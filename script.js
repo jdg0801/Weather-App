@@ -3,6 +3,10 @@ const searchButton = document.querySelector(".search-btn");
 const locationButton = document.querySelector(".location-btn");
 const currentWeatherDiv = document.querySelector(".current-weather");
 const weatherCardsDiv = document.querySelector(".weather-cards");
+const tempLayer = "temp_new";
+const windSpeedLayer = "wind_new";
+const precipitationLayer = "precipitation_new";
+const cloudLayer = "clouds_new";
 
 const API_KEY = "54ac297df966516e8bf7657890f1a3d6"; // API key for OpenWeatherMap API
 
@@ -70,6 +74,7 @@ const getCityCoordinates = () => {
     fetch(API_URL).then(response => response.json()).then(data => {
         if (!data.length) return alert(`No coordinates found for ${cityName}`);
         const { lat, lon, name } = data[0];
+         weatherMapDisplay(lat, lon);
         getWeatherDetails(name, lat, lon);
     }).catch(() => {
         alert("An error occurred while fetching the coordinates!");
@@ -84,6 +89,7 @@ const getUserCoordinates = () => {
             const API_URL = `https://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${API_KEY}`;
             fetch(API_URL).then(response => response.json()).then(data => {
                 const { name } = data[0];
+                weatherMapDisplay(latitude, longitude);
                 getWeatherDetails(name, latitude, longitude);
             }).catch(() => {
                 alert("An error occurred while fetching the city name!");
@@ -97,6 +103,62 @@ const getUserCoordinates = () => {
             }
         });
 }
+
+const weatherMapDisplay = (lat, lon) => {
+    let map1 = L.map('temp').setView([lat, lon], 5);
+    let map2 = L.map('ws').setView([lat, lon], 5);
+    let map3 = L.map('prctp').setView([lat, lon], 5);
+    let map4 = L.map('cloud').setView([lat, lon], 5);
+
+    //Adding OSM Layer
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map1);
+    
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map2);
+    
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map3);
+
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map4);
+     
+
+    //Adding weatherMap Layers
+    L.tileLayer(`https://tile.openweathermap.org/map/${tempLayer}/{z}/{x}/{y}.png?appid=${API_KEY}`, {
+        minZoom: 0,
+        maxZoom: 20,
+        // attribution: '&copy; CNES, Distribution Airbus DS, © Airbus DS, © PlanetObserver (Contains Copernicus Data) | &copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        ext: 'png'
+    }).addTo(map1);
+    L.tileLayer(`https://tile.openweathermap.org/map/${precipitationLayer}/{z}/{x}/{y}.png?appid=${API_KEY}`, {
+        minZoom: 0,
+        maxZoom: 20,
+        // attribution: '&copy; CNES, Distribution Airbus DS, © Airbus DS, © PlanetObserver (Contains Copernicus Data) | &copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        ext: 'png'
+    }).addTo(map3);
+    L.tileLayer(`https://tile.openweathermap.org/map/${windSpeedLayer}/{z}/{x}/{y}.png?appid=${API_KEY}`, {
+        minZoom: 0,
+        maxZoom: 20,
+        // attribution: '&copy; CNES, Distribution Airbus DS, © Airbus DS, © PlanetObserver (Contains Copernicus Data) | &copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        ext: 'png'
+    }).addTo(map2);
+    L.tileLayer(`https://tile.openweathermap.org/map/${cloudLayer}/{z}/{x}/{y}.png?appid=${API_KEY}`, {
+        minZoom: 0,
+        maxZoom: 20,
+        // attribution: '&copy; CNES, Distribution Airbus DS, © Airbus DS, © PlanetObserver (Contains Copernicus Data) | &copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        ext: 'png'
+    }).addTo(map4);
+
+};
 
 locationButton.addEventListener("click", getUserCoordinates);
 searchButton.addEventListener("click", getCityCoordinates);
