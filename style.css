@@ -211,3 +211,32 @@ h1 {
         font-size: 1.35rem;
     }
 }
+
+
+.weather-maps{
+    /* border: 1px solid black; */
+    display: flex;
+    justify-content: space-around;
+    padding: auto;
+}
+
+.map{
+    padding: auto;
+    height: 250px;
+    width: 250px;
+    /* border: 1px solid black; */
+}
+
+.CloudMap > p{
+ margin-top: 10px;    
+}
+
+.tempMap > p{
+    margin-top: 10px;
+}
+.windSpeedMap > p{
+    margin-top: 10px;
+}
+.PrecipitationMap > p{
+    margin-top: 10px;
+}
